@@ -9,10 +9,8 @@ from datetime import datetime
 import difflib
 
 class DocumentSegmenter:
-    """Enhanced class for hierarchical segmentation of document text."""
     
     def __init__(self, use_machine_learning=False):
-        """Initialize the document segmenter."""
         logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
         self.logger = logging.getLogger(__name__)
         self.segment_cache = {}
@@ -70,17 +68,6 @@ class DocumentSegmenter:
         ]
     
     def segment_document(self, text, layout_info=None, page_metadata=None):
-        """
-        Fast document text segmentation with optimized processing.
-        
-        Args:
-            text (str): Full document text.
-            layout_info (dict, optional): Document layout information from PDF analysis.
-            page_metadata (list, optional): Page metadata from PDF analysis.
-            
-        Returns:
-            list: List of segment dictionaries with hierarchical structure.
-        """
         self.logger.info("Starting optimized document segmentation")
         
         if not text or not isinstance(text, str):
@@ -150,22 +137,12 @@ class DocumentSegmenter:
                     if entity_type not in segment["named_entities"]:
                         segment["named_entities"][entity_type] = []
         
-        # Cache the results for future use
         self.segment_cache[text_hash] = segments
         
         self.logger.info(f"Optimized segmentation complete: {len(segments)} segments identified")
         return segments
         
     def _extract_potential_headings(self, text):
-        """
-        Extract potential headings from the document text using optimized strategies.
-        
-        Args:
-            text (str): Document text.
-            
-        Returns:
-            list: List of potential heading dictionaries with position and confidence score.
-        """
         self.logger.debug("Fast extraction of potential headings")
         potential_headings = []
         
@@ -199,21 +176,17 @@ class DocumentSegmenter:
             
             # Skip empty lines and very long lines (unlikely headings)
             line = line.strip()
-            if not line or len(line) > 120 or len(line) < 3:  # Adjusted for better performance
+            if not line or len(line) > 120 or len(line) < 3:
                 continue
             
-            # Quick word count - avoid expensive splitting
             spaces = line.count(' ')
-            if spaces > self.heading_config['max_heading_words']:  # Approximate word count
+            if spaces > self.heading_config['max_heading_words']:
                 continue
             
-            # Calculate initial confidence score
             confidence = 0.0
             heading_text = ""
             heading_level = 0
             prefix = ""
-            
-            # Fast path: Common heading patterns (Chapter, Section, numeric prefixes)
             if line.startswith(('Chapter ', 'CHAPTER ', 'Section ', 'SECTION ')):
                 heading_text = line
                 heading_level = 1
@@ -298,12 +271,6 @@ class DocumentSegmenter:
         return potential_headings
     
     def _refine_heading_levels(self, headings):
-        """
-        Refine heading levels based on their sequence and prefixes.
-        
-        Args:
-            headings (list): List of potential heading dictionaries.
-        """
         if not headings:
             return
         
@@ -357,18 +324,6 @@ class DocumentSegmenter:
                 current_levels.pop(l, None)
     
     def _analyze_document_structure(self, text, potential_headings, layout_info=None):
-        """
-        Analyze the document structure based on headings and layout.
-        Optimized for speed with minimal processing.
-        
-        Args:
-            text (str): Document text.
-            potential_headings (list): List of potential heading dictionaries.
-            layout_info (dict, optional): Document layout information.
-            
-        Returns:
-            dict: Document structure information.
-        """
         self.logger.debug("Fast document structure analysis")
         
         # Initialize document structure with minimal processing
@@ -421,17 +376,6 @@ class DocumentSegmenter:
         return doc_structure
     
     def _build_hierarchical_segments(self, text, doc_structure, page_metadata=None):
-        """
-        Build hierarchical segments based on document structure analysis.
-        
-        Args:
-            text (str): Document text.
-            doc_structure (dict): Document structure information.
-            page_metadata (list, optional): Page metadata for mapping text positions to pages.
-            
-        Returns:
-            list: List of segment dictionaries with hierarchical structure.
-        """
         segments = []
         headings = doc_structure.get('headings', [])
         
@@ -520,17 +464,6 @@ class DocumentSegmenter:
         
         return segments
     def _get_pages_for_segment(self, start_index, end_index, page_metadata):
-        """
-        Determine which pages a segment spans based on character positions.
-        
-        Args:
-            start_index (int): Start index of the segment in the text.
-            end_index (int): End index of the segment in the text.
-            page_metadata (list): List of page metadata dictionaries.
-            
-        Returns:
-            list: List of page numbers that the segment spans.
-        """
         segment_pages = []
         
         for page in page_metadata:
@@ -541,16 +474,6 @@ class DocumentSegmenter:
         return segment_pages
     
     def _post_process_segments(self, text, segments):
-        """
-        Post-process segments to ensure proper nesting and handle edge cases.
-        
-        Args:
-            text (str): Document text.
-            segments (list): List of segment dictionaries.
-            
-        Returns:
-            list: Processed list of segment dictionaries.
-        """
         self.logger.debug("Post-processing segments")
         
         if not segments:
@@ -591,16 +514,6 @@ class DocumentSegmenter:
         return segments
     
     def _extract_segment_metadata(self, text, segments):
-        """
-        Extract metadata for each segment including dates, sources, etc.
-        
-        Args:
-            text (str): Document text.
-            segments (list): List of segment dictionaries.
-            
-        Returns:
-            list: Segments with enhanced metadata.
-        """
         self.logger.debug("Extracting segment metadata")
         
         for segment in segments:
@@ -622,7 +535,6 @@ class DocumentSegmenter:
         return segments
 
     def _extract_date(self, text):
-        """Extract potential date from text using advanced patterns."""
         if not text:
             return None
             
@@ -680,15 +592,6 @@ class DocumentSegmenter:
         return None
     
     def _validate_date(self, date_str):
-        """
-        Validate if the extracted date string is likely to be a real date.
-        
-        Args:
-            date_str (str): Date string to validate.
-            
-        Returns:
-            bool: True if date seems valid, False otherwise.
-        """
         if not date_str:
             return False
             
@@ -700,16 +603,6 @@ class DocumentSegmenter:
         return False
     
     def _extract_source(self, text, position):
-        """
-        Extract the source of a segment using advanced recognition techniques.
-        
-        Args:
-            text (str): Segment text.
-            position (int): Position in the full document.
-            
-        Returns:
-            str: Extracted source or None if not found.
-        """
         if not text:
             return None
             
