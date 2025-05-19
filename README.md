@@ -46,8 +46,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/document-processor.git
-cd document-processor
+git clone https://github.com/sabhi728/AI-Pdf-Analyzer
 
 # Create a virtual environment (optional but recommended)
 python -m venv venv
@@ -221,10 +220,5 @@ The solution includes comprehensive error handling for:
 - Text extraction failures
 - Processing errors during segmentation or NER
 
-## 📜 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
 
----
-
-<p align="center">Built with ❤️ for better document understanding</p>
