@@ -380,50 +380,37 @@ class DocumentReader:
         if not text_blocks:
             return []
         
-        # Get page dimensions
         page_width = float(page.width)
         
         if simplified:
-            # Fast column detection - check for common 2-column or 3-column patterns
-            # This is much faster but less accurate for complex layouts
-            
-            # Check if we have a single text block (from simplified extraction)
             if len(text_blocks) == 1 and text_blocks[0].get('width', 0) > page_width * 0.8:
-                # If we have a single block covering most of the page width,
-                # we can't reliably detect columns in simplified mode
                 return [text_blocks]
             
-            # Simple heuristic: check if text blocks form clear left/right pattern
             left_blocks = []
             right_blocks = []
             middle_blocks = []
             
             for block in text_blocks:
                 center_x = block.get('x_center', block['bbox'][0] + (block['bbox'][2] - block['bbox'][0])/2)
-                if center_x < page_width * 0.33:  # Left third
+                if center_x < page_width * 0.33:
                     left_blocks.append(block)
-                elif center_x > page_width * 0.67:  # Right third
+                elif center_x > page_width * 0.67:
                     right_blocks.append(block)
-                else:  # Middle third
+                else:
                     middle_blocks.append(block)
             
-            # Check for 2-column layout
-            if len(left_blocks) > 2 and len(right_blocks) > 2 and len(middle_blocks) < len(left_blocks) + len(right_blocks):
+            if left_blocks and right_blocks and not middle_blocks:
                 return [left_blocks, right_blocks]
             
-            # Check for 3-column layout
             if len(left_blocks) > 1 and len(middle_blocks) > 1 and len(right_blocks) > 1:
                 return [left_blocks, middle_blocks, right_blocks]
             
-            # Default to single column in simplified mode
             return [text_blocks]
         
-        # Full detailed column detection follows
-        # Extract x-positions of text blocks
+        columns = []
         x_positions = [(block['bbox'][0], block['bbox'][2]) for block in text_blocks]
         x_starts = [pos[0] for pos in x_positions]
         
-        # Sort and look for natural breaks in x-positions
         sorted_starts = sorted(x_starts)
         gaps = [sorted_starts[i+1] - sorted_starts[i] for i in range(len(sorted_starts)-1)]
         
@@ -515,7 +502,6 @@ class DocumentReader:
                 if re.search(page_number_pattern, line):
                     toc_like_lines += 1
             
-            # Check if this page looks like a TOC
             if any(re.search(pattern, text.lower()) for pattern in toc_indicators) or toc_like_lines > 5:
                 toc_pages.append(i)
         

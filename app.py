@@ -10,12 +10,11 @@ from io import StringIO
 from collections import Counter
 from streamlit_option_menu import option_menu
 
-# Import our document processing modules
 from document_reader import DocumentReader
 from segmentation import DocumentSegmenter
 from ner_processor import NERProcessor
 
-# Custom styling
+
 st.set_page_config(
     page_title="Advanced Document Analyzer",
     page_icon="📑",

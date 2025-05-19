@@ -26,7 +26,6 @@ class NERProcessor:
         self.use_transformers = use_transformers
         self.entity_cache = {}
         
-        # Define custom entity types we want to track
         self.entity_types = {
             "persons": ["PERSON"],
             "organizations": ["ORG", "NORP", "FAC"],

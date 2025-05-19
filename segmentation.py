@@ -18,13 +18,9 @@ class DocumentSegmenter:
         self.segment_cache = {}
         self.use_machine_learning = use_machine_learning
         
-        # Configuration for heading detection
         self.heading_config = {
-            # Minimum confidence score to consider something a heading
             'min_confidence': 0.6,
-            # Maximum words typically found in headings
             'max_heading_words': 15,
-            # Prefixes that strongly indicate a heading
             'strong_prefixes': [
                 'chapter', 'section', 'part', 'appendix', 'exhibit',
                 'schedule', 'addendum', 'annex'
