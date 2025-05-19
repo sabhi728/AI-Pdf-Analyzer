@@ -3,9 +3,12 @@
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.21.0-FF4B4B)](https://streamlit.io/)
 [![spaCy](https://img.shields.io/badge/spaCy-3.5.0-09A3D5)](https://spacy.io/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 > An intelligent document processing system that extracts structured information from PDFs with advanced segmentation and named entity recognition.
+
+<p align="center">
+  <img src="images/1.png" alt="Document Processor Interface" width="800"/>
+</p>
 
 ## 🚀 Features
 
@@ -46,8 +49,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/document-processor.git
-cd document-processor
+git clone https://github.com/sabhi728/AI-Pdf-Analyzer
 
 # Create a virtual environment (optional but recommended)
 python -m venv venv
@@ -88,6 +90,10 @@ python -m streamlit run app.py
 
 The application will be available at `http://localhost:8501`.
 
+<p align="center">
+  <img src="images/2.png" alt="Document Processor Web Interface" width="800"/>
+</p>
+
 ### Processing a Document
 
 <details open>
@@ -116,6 +122,10 @@ PDF Document → Document Reader → Document Segmenter → NER Processor → JS
      ↓               ↓                 ↓                  ↓               ↓           ↓
    Input      Text Extraction    Segment Hierarchy    Entity Detection   Output     Visualization
 ```
+
+<p align="center">
+  <img src="images/3.png" alt="Document Processing Architecture" width="800"/>
+</p>
 
 ### Core Components
 
@@ -160,6 +170,10 @@ Provides an interactive interface built with Streamlit:
 
 ## 📊 Example Output
 
+<p align="center">
+  <img src="images/4.png" alt="Document Analysis Results" width="800"/>
+</p>
+
 ```json
 {
   "segments": [
@@ -185,6 +199,10 @@ Provides an interactive interface built with Streamlit:
 ```
 
 ## 🔍 Performance Optimizations
+
+<p align="center">
+  <img src="images/5.png" alt="Performance Optimization Results" width="800"/>
+</p>
 
 <details>
 <summary><strong>Show optimization techniques</strong></summary>
@@ -221,10 +239,5 @@ The solution includes comprehensive error handling for:
 - Text extraction failures
 - Processing errors during segmentation or NER
 
-## 📜 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
 
----
-
-<p align="center">Built with ❤️ for better document understanding</p>
