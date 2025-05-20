@@ -1,87 +1,123 @@
-import streamlit as st
-import json
-import os
-import re
-import tempfile
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-from io import StringIO
-from collections import Counter
-from streamlit_option_menu import option_menu
+# =================================================================
+# Advanced Document Analyzer - Web Interface
+# =================================================================
 
-from document_reader import DocumentReader
-from segmentation import DocumentSegmenter
-from ner_processor import NERProcessor
+# Standard library imports
+import json       # For JSON serialization/deserialization
+import os         # For file path operations
+import tempfile   # For temporary file handling
+from io import StringIO    # For string-based I/O operations
+from collections import Counter  # For counting entity occurrences
+
+# Third-party imports
+import streamlit as st                 # Web app framework
+import pandas as pd                    # Data manipulation library
+import plotly.express as px            # Interactive visualization
+from streamlit_option_menu import option_menu  # Enhanced navigation menu
+
+# Local application imports
+from document_reader import DocumentReader    # PDF extraction module
+from segmentation import DocumentSegmenter    # Document structure analysis
+from ner_processor import NERProcessor        # Named entity recognition
 
 
+# Configure Streamlit page settings
 st.set_page_config(
-    page_title="Advanced Document Analyzer",
-    page_icon="📑",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    page_title="Advanced Document Analyzer",  # Browser tab title
+    page_icon="📑",                         # Favicon/icon
+    layout="wide",                         # Use the full screen width
+    initial_sidebar_state="expanded"        # Start with sidebar open
 )
 
-
+# Apply custom CSS styling for better UX
+# This improves the visual appearance and readability of the application
 st.markdown("""
 <style>
+    /* Reduce top padding for more content space */
     .main .block-container {
         padding-top: 2rem;
     }
     
+    /* Increase tab text size for better readability */
     .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
         font-size: 1.2rem;
     }
     
+    /* Hierarchical segment visualization styling */
+    /* Each level has a distinct color and indentation to visually represent document hierarchy */
+    
+    /* Level 1: Top-level headings (red) */
     .hierarchy-level-1 {
-        border-left: 4px solid #FF4B4B;
+        border-left: 4px solid #FF4B4B;  /* Red border */
         padding-left: 10px;
     }
     
+    /* Level 2: Second-level headings (dark blue) */
     .hierarchy-level-2 {
-        border-left: 4px solid #0068C9;
-        padding-left: 20px;
+        border-left: 4px solid #0068C9;  /* Dark blue border */
+        padding-left: 20px;             /* Additional indentation */
     }
     
+    /* Level 3: Third-level headings (light blue) */
     .hierarchy-level-3 {
-        border-left: 4px solid #83C9FF;
-        padding-left: 30px;
+        border-left: 4px solid #83C9FF;  /* Light blue border */
+        padding-left: 30px;             /* Additional indentation */
     }
     
+    /* Level 4: Fourth-level headings (teal) */
     .hierarchy-level-4 {
-        border-left: 4px solid #29B09D;
-        padding-left: 40px;
+        border-left: 4px solid #29B09D;  /* Teal border */
+        padding-left: 40px;             /* Additional indentation */
     }
     
+    /* Level 5: Fifth-level headings (orange) */
     .hierarchy-level-5 {
-        border-left: 4px solid #FFBD45;
-        padding-left: 50px;
+        border-left: 4px solid #FFBD45;  /* Orange border */
+        padding-left: 50px;             /* Additional indentation */
     }
 </style>
 """, unsafe_allow_html=True)
 
 def main():
+    """Main application entry point.
     
+    Sets up the top-level navigation and routes to the appropriate view
+    based on user selection. The app has two main sections:
+    1. Analyzer - The core document processing interface
+    2. Documentation - Help and usage instructions
+    """
+    # Create horizontal navigation menu with icons
     selected = option_menu(
-        menu_title=None,
-        options=["Analyzer", "Documentation"],
-        icons=["graph-up", "file-text"],
-        menu_icon="cast",
-        default_index=0,
-        orientation="horizontal",
+        menu_title=None,                           # No title needed for horizontal menu
+        options=["Analyzer", "Documentation"],      # Main navigation options
+        icons=["graph-up", "file-text"],           # Bootstrap icons for each option
+        menu_icon="cast",                          # Menu icon (not shown in horizontal)
+        default_index=0,                          # Default to Analyzer view
+        orientation="horizontal",                   # Horizontal layout saves vertical space
         styles={
+            # Custom styling for better visual appearance
             "container": {"padding": "0!important", "margin-bottom": "1rem"},
             "icon": {"font-size": "1rem"},
             "nav-link": {"font-size": "1rem", "text-align": "center", "padding": "0.5rem 1rem"}
         }
     )
     
+    # Route to the appropriate view based on selection
     if selected == "Analyzer":
-        show_analyzer()
+        show_analyzer()       # Show the main document analysis interface
     else:
-        show_documentation()
+        show_documentation()  # Show the help documentation
 
 def show_analyzer():
+    """Display and handle the main document analysis interface.
+    
+    This function manages the core document processing workflow including:
+    - Document upload interface in the sidebar
+    - Processing controls and configuration options
+    - Document rendering and visualization
+    - Results display in multiple tabs (structure, entities, raw data)
+    """
+    # Application header and description
     st.title("Advanced Document Analyzer") 
     st.markdown("""
     This application uses AI to intelligently process PDF documents. It:
@@ -92,15 +128,19 @@ def show_analyzer():
     4. **Produces structured JSON data** based on the actual document content
     """)
     
-    # Sidebar for document upload and processing controls
+    # Sidebar configuration panel
+    # Contains upload controls and processing options
     with st.sidebar:
         st.header("📤 Upload Document")
+        # PDF file uploader - triggers processing when file is selected
         uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
         
         st.header("⚙️ Output Format")
+        # Currently fixed to JSON - could be expanded in future versions
         output_format = "JSON" 
         st.info("Data will be provided in structured JSON format")
         
+        # Using the large model for better entity recognition accuracy
         spacy_model = "en_core_web_lg"
         remove_headers = True
         detect_columns = True
