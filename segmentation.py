@@ -485,10 +485,13 @@ class DocumentSegmenter:
                 title = f"{numeric_prefix} {clean_text}".strip()
             
             # Determine precise start index - include the heading itself
-            start_idx = start_index
-            
+            start_idx = heading.get('start_index', 0)
+        
+            # Calculate end index (either next heading or end of document)
+            end_idx = sorted_headings[i+1].get('start_index', len(text)) if i < len(sorted_headings) - 1 else len(text)
+        
             # Extract segment text using precise indices
-            segment_text = text[start_idx:end_index].strip()
+            segment_text = text[start_idx:end_idx].strip()
             
             # Skip minimal segments - any segment under 15 characters is likely a processing artifact
             if len(segment_text) < 15:

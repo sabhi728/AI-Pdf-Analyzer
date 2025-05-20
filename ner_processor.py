@@ -434,8 +434,7 @@ class NERProcessor:
         if not text:
             return
             
-        # OPTIMIZATION: Use pre-compiled regex patterns for improved performance
-        # These are now class constants to avoid recompilation on each call
+        
         if not hasattr(self, '_EMAIL_PATTERN'):
             # RFC 5322 compliant email regex - highly accurate but fast
             self._EMAIL_PATTERN = re.compile(r'\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b')
